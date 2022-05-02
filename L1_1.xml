@@ -5,8 +5,10 @@
 	<TITLE> Database Systems - The Complete Book. </TITLE>
 	<!--Ordningen på AUTHOR har justerats-->
 	<AUTHOR ID="1">
+		<!--Flyttade om platserna för för- och efternamn, samt ändrade namnet HECTOR till Hector-->
+		<FIRSTNAME>Hector</FIRSTNAME>
 		<LASTNAME>Garcia-Molina</LASTNAME>
-		<FIRSTNAME>HECTOR</FIRSTNAME>
+
 	</AUTHOR>
 	<!--Det fattades ett ID-nummer för författaren Ullman-->
 	<AUTHOR ID="2">
