@@ -1,0 +1,101 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "title": "The Root Schema",
+  "description": "The root schema comprises the entire JSON document.",
+  "default": {},
+  "additionalProperties": true,
+  "required": [
+    "book"
+  ],
+  "properties": {
+    "book": {
+      "$id": "#/properties/book",
+      "type": "object",
+      "default": {},
+      "additionalProperties": true,
+      "required": [
+        "isbn",
+        "title",
+        "authors",
+        "chapters"
+      ],
+      "properties": {
+        "isbn": {
+          "$id": "#/properties/book/properties/isbn",
+          "type": "string",
+          "default": ""
+        },
+        "title": {
+          "$id": "#/properties/book/properties/title",
+          "type": "string",
+          "default": ""
+        },
+        "authors": {
+          "$id": "#/properties/book/properties/authors",
+          "type": "array",
+          "default": [],
+          "additionalItems": true,
+          "items": {
+            "$id": "#/properties/book/properties/authors/items",
+            "type": "object",
+            "default": {},
+            "additionalProperties": true,
+            "required": [
+              "id",
+              "lastname"
+            ],
+            "properties": {
+              "id": {
+                "$id": "#/properties/book/properties/authors/items/properties/id",
+                "type": "integer",
+                "default": 0
+              },
+              "lastname": {
+                "$id": "#/properties/book/properties/authors/items/properties/lastname",
+                "type": "string",
+                "default": ""
+              }
+            }
+          }
+        },
+        "chapters": {
+          "$id": "#/properties/book/properties/chapters",
+          "type": "array",
+          "default": [],
+          "additionalItems": true,
+          "items": {
+            "$id": "#/properties/book/properties/chapters/items",
+            "type": "object",
+            "default": {},
+            "additionalProperties": true,
+            "properties": {
+              "num": {
+                "$id": "#/properties/book/properties/chapters/items/properties/num",
+                "type": "integer",
+                "default": 0
+              },
+              "title": {
+                "$id": "#/properties/book/properties/chapters/items/properties/title",
+                "type": "string",
+                "default": ""
+              },
+              "text": {
+                "$id": "#/properties/book/properties/chapters/items/properties/text",
+                "type": "string",
+                "default": [],
+                "additionalItems": true,
+                "items": {
+                  "$id": "#/properties/book/properties/chapters/items/properties/text/items",
+                  "type": "string",
+                  "default": ""
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

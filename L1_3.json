@@ -1,0 +1,39 @@
+{
+  "book": {
+    "isbn": "DB123",
+    "title": "Database Systems - The Complete Book.",
+    "authors": [
+      {
+        "id": 1,
+        "lastname": "Garcia-Molina",
+        "firstname": "HECTOR"
+      },
+      {
+        "id": 2,
+        "lastname": "Ullman"
+      },
+      {
+        "id": 3,
+        "lastname": "Widom"
+      }
+
+
+    ],
+    "chapters": [
+      {
+        "num": 0,
+        "title": "Introduction to XML"
+      },
+      {
+        "num": 1,
+        "title": "The Worlds of Database Systems",
+        "text": "We overview the evolution of database systems."
+      },
+      {
+        "num": 2,
+        "title": "The Entity-Relationship Data Model",
+        "text": "We explain the elements of the ER model. Then we move to design principles"
+      }
+    ]
+  }
+}

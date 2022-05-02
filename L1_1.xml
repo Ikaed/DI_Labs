@@ -1,0 +1,40 @@
+﻿<!--Namespace lades till-->
+<BOOK ISBN="DB123" xmlns="http://www.w3.org/namespace/">
+
+
+	<TITLE> Database Systems - The Complete Book. </TITLE>
+	<!--Ordningen på AUTHOR har justerats-->
+	<AUTHOR ID="1">
+		<LASTNAME>Garcia-Molina</LASTNAME>
+		<FIRSTNAME>HECTOR</FIRSTNAME>
+	</AUTHOR>
+	<!--Det fattades ett ID-nummer för författaren Ullman-->
+	<AUTHOR ID="2">
+		<LASTNAME>Ullman</LASTNAME>
+	</AUTHOR>
+
+	<AUTHOR ID="3">
+		<LASTNAME>Widom</LASTNAME>
+	</AUTHOR>
+
+
+	<INTRODUCTION>
+		<TITLE>Introduction to XML</TITLE>
+
+	</INTRODUCTION>
+
+	<CHAPTER>
+		<NUM>1</NUM>
+		<TITLE>The Worlds of Database Systems </TITLE>
+		<TEXT>We overview the evolution of database systems.</TEXT>
+	</CHAPTER>
+
+	<CHAPTER>
+		<!--Felnumrerat kapitel, ändrat från 1 till 2-->
+		<NUM>2</NUM>
+		<TITLE>The Entity-Relationship Data Model</TITLE>
+		<TEXT>We explain the elements of the ER model.</TEXT>
+		<TEXT>Then we move to design principles</TEXT>
+	</CHAPTER>
+
+</BOOK>
