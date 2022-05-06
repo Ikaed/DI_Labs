@@ -6,15 +6,16 @@
       {
         "id": 1,
         "lastname": "Garcia-Molina",
-        "firstname": "HECTOR"
-      },
-      {
-        "id": 3,
-        "lastname": "Widom"
+        "firstname": "Hector"
       },
       {
         "id": 2,
         "lastname": "Ullman"
+      },
+
+      {
+        "id": 3,
+        "lastname": "Widom"
       }
 
 
