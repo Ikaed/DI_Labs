@@ -1,4 +1,4 @@
-﻿<BOOK ISBN="DB123" xmlns="http://www.w3.org/namespace/">
+<BOOK ISBN="DB123" xmlns="http://www.w3.org/namespace/">
 
 	<TITLE>
 		Database Systems - The Complete Book.
@@ -6,15 +6,15 @@
 	<!--Enligt XML-schemat så kan bara strukturen ha ett AUTHOR-element (maxOccurs=1)-->
 	<AUTHOR ID="1">
 		<LASTNAME>Garcia-Molina</LASTNAME>
-		<FIRSTNAME>HECTOR</FIRSTNAME>
+		<FIRSTNAME>Hector</FIRSTNAME>
 
 	</AUTHOR>
 
 
 	<INTRODUCTION>
 		<TITLE>Introduction to XML</TITLE>
-		<!--Ett tomt TEXT-element eftersom strukturen enligt XML-schemat kräver det-->
-		<TEXT></TEXT>
+		<!--Ett TEXT-element eftersom strukturen enligt XML-schemat kräver det-->
+		<TEXT>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</TEXT>
 	</INTRODUCTION>
 
 	<CHAPTER>
