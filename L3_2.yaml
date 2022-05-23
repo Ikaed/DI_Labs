@@ -5,9 +5,12 @@ info:
   description: A REST API to GET a cup of cofveve
 servers:
   - url: https://latteloun.ge/v1
+#From a life like scenario, it would be strange if barista and cashier wouldn't be able to do the same thing, because they could be the same person.
+tags:
+  - name: "Barista and cashier"
 components:
   responses:
-    400Error:
+    400BadRequest:
       description: Invalid request
       content:
         application/json:
@@ -66,7 +69,10 @@ components:
           type: number
 paths:
   /order:
+  # 1. Cashier creates an Order for a coffee (e.g. latte, cappuccino, espresso etc.)
     post:
+      tags:
+      - "Barista and cashier"
       description: Cashier creates an order for a coffee
       requestBody:
         required: true
@@ -89,48 +95,23 @@ paths:
       responses:
         '200':
           description: Successfully created an order
-#          content:
-#            application/json:
-#              schema:
-#                type: object
-#                properties:
-#                  id:
-#                    type: integer
-#                    format: int64
-#                    description: ID of order
-#          links:
-#            getOrderByID:
-#              description: Get ID
-#              operationId: getOrderId
-#              parameters:
-#                orderId: $response.body#/id
         '400':
-          $ref: '#/components/responses/400Error'
-    get:
-      description: Returns a list of orders
-      parameters:
-        - $ref: '#/components/parameters/Limit'
-        - $ref: '#/components/parameters/Offset'
-      responses:
-        '200':
-          description: Successfully returned a list of orders
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Order'
-        '400':
-          $ref: '#/components/responses/400Error'
+          $ref: '#/components/responses/400BadRequest'
+
   /order/{orderId}:
+    # 2. Cashier amends the Order by adding an addition (e.g. extra shot, whipped cream etc.)
+    # You want to use patch instead of put as you only want to do some changes to an existing resource, in this case an existing order.
     patch:
+      tags:
+      - "Barista and cashier"
       description: Amends the order by adding an addition
       parameters:
         - name: orderId
           in: path
+          description: ID of order
           required: true
           schema:
-            $ref: '#/components/schemas/Order'
+            type: string
       requestBody:
         required: true
         content:
@@ -144,16 +125,22 @@ paths:
         '200':
           description: Successfully added an addition
         '400':
-          $ref: '#/components/responses/400Error'
-          #The order will be released (removed) depending on the status for that order
+          $ref: '#/components/responses/400BadRequest'
+        "404":
+          description: "Order not found"
+          
+    # 7. Barista releases the Order
     delete:
+      tags:
+      - "Barista and cashier"
       description: Release the order
       parameters:
         - name: orderId
           in: path
+          description: ID of order
           required: true
           schema:
-            $ref: '#/components/schemas/Order'
+            type: string
       responses:
         '200':
           description: Successfully deleted an order
@@ -164,9 +151,16 @@ paths:
                 items:
                   $ref: '#/components/schemas/Order'
         '400':
-          $ref: '#/components/responses/400Error'
-  /order/{orderId}/payment:
+          $ref: '#/components/responses/400BadRequest'
+        "404":
+          description: "Order not found"
+          
+    # 3. Cashier creates a Payment for the order
+    #You are in order/, and for the order id you create a payment.
+  /order/payment/{orderId}:
     post:
+      tags:
+      - "Barista and cashier"
       description: Cashier creates a payment for the order
       parameters:
         - name: orderId
@@ -185,16 +179,22 @@ paths:
         '200':
           description: Successfully created a payment for the order
         '400':
-          $ref: '#/components/responses/400Error'
+          $ref: '#/components/responses/400BadRequest'
+        "404":
+          description: "Order not found"
+          
+    # 6. Barista checks if the Order is paid
     get:
+      tags:
+      - "Barista and cashier"
       description: Checks if the order is paid
-#      operationId: getOrderId
       parameters:
         - name: orderId
           in: path
+          description: ID of order
           required: true
           schema:
-            type: object
+            type: string
             properties:
               orderId:
                 type: string
@@ -213,18 +213,23 @@ paths:
                   paid:
                    type: boolean
         '400':
-          $ref: '#/components/responses/400Error'
-          #The status of the order can i.e. be changed to prepared, which will make it an open order, served or cancelled.
-          #If a customer cancel the order, paid will also be changed to false as they will get their money back.
-  /order/{orderId}/payment/status:
+          $ref: '#/components/responses/400BadRequest'
+        "404":
+          description: "Order not found"
+  /order/status/{orderId}:
+  
+  # 5. Barista changes the status of the Order to being prepared
     patch:
+      tags:
+      - "Barista and cashier"
       description: Changes the status of the order to being prepared
       parameters:
         - name: orderId
           in: path
+          description: ID of order
           required: true
           schema:
-            $ref: '#/components/schemas/Order'
+            type: string
       requestBody:
         required: true
         content:
@@ -237,22 +242,29 @@ paths:
                 paid:
                   type: boolean
                   default: true
+          #The status of the order can i.e. be changed to prepared, which will make it an open order, served or cancelled.
+          #If a customer cancel the order, paid will also be changed to false as they will get their money back. This depends on how the database is structured.
       responses:
         '200':
-          description: Successfully added an addition
+          description: Successfully changed the status
         '400':
-          $ref: '#/components/responses/400Error'
-    get:
-      description: Checks if the order is open
+          $ref: '#/components/responses/400BadRequest'
+        "404":
+          description: "Order not found"
+   
+   # 4. Barista gets the list of all open Orders (only one order is available)
+   # 8. Barista gets the list of all Open Orders (no order is available)
+  /orders:
+     get:
+      tags:
+      - "Barista and cashier"
+      description: Returns a list of orders
       parameters:
-        - name: orderId
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/Order'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Offset'
       responses:
         '200':
-          description: Successfully returned a list of open orders
+          description: Successfully returned a list of orders
           content:
             application/json:
               schema:
@@ -260,4 +272,4 @@ paths:
                 items:
                   $ref: '#/components/schemas/Order'
         '400':
-          $ref: '#/components/responses/400Error'
+          $ref: '#/components/responses/400BadRequest'
