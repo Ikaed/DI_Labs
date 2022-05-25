@@ -201,6 +201,7 @@ paths:
       responses:
         '200':
           description: Successfully removed a room
+
         '400':
           $ref: '#/components/responses/400Error'
     delete:
@@ -218,6 +219,13 @@ paths:
       responses:
         '200':
           description: Successfully removed a room
+          content:
+           application/json:
+            schema:
+             $ref: '#/components/schemas/Room'
+          links:
+           GetRoomByRoomNumber:
+             $ref: '#/components/links/GetRoomByRoomNumber'
         '400':
           $ref: '#/components/responses/400Error'
     patch:
