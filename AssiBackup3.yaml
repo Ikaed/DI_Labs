@@ -1,0 +1,576 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: BookIT
+  description: Booking rooms at fictional university department called the Department of Infographics and Trivia (IT).
+servers:
+  - url: /v1
+
+#An administrator managing the room records (add, remove, edit rooms) 
+#Anybody getting the list of available rooms (get)
+#Anybody getting the list of booked rooms (get) (filtrera på available och booked)
+#Anybody getting the list of rooms on a specific floor (plan)
+#enum??? en rullista??
+#Anybody getting the booking status of a specific room
+#A staff member requesting to book a room /ref till booking post?
+#A staff member editing a room they have booked (patch) ref till booking patch
+#A staff member relinquishing a room they have booked (delete) ref till booking
+
+components:
+  responses:
+    400Error:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+        
+    404NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+
+  links:
+    GetRoomByRoomNumber:   # <----- The $ref's above point here
+      description: ''
+      operationId: getRoomNumber
+      parameters:
+        roomNumber: '$response.body#/room/roomNumber'
+    GetBookedRoomByRoomNumber:   # <----- The $ref's above point here
+      description: ''
+      operationId: getBookedRoomNumber
+      parameters:
+        roomNumber: '$response.body#/room/booking/roomNumber'
+        #SLUT
+#  parameters:
+#    Limit:
+#      name: limit
+#      in: query
+#      description: Limits the number of rooms on a page
+#      schema:
+#        type: integer
+#    Offset:
+#      name: offset
+#      in: query
+#      description: Specifies the page number of the rooms to be displayed
+#      schema:
+ #       type: integer
+  securitySchemes:
+    oAuthSample:    # <---- arbitrary name
+      type: oauth2
+      description: This API uses OAuth 2 with the implicit grant flow. [More info](https://api.example.com/docs/auth)
+      flows:
+        implicit:   # <---- OAuth flow(authorizationCode, implicit, password or clientCredentials)
+          authorizationUrl: https://api.example.com/oauth2/authorize
+          scopes:
+            read_rooms: read your rooms
+            write_rooms: modify rooms in your account
+
+  schemas:
+    Room:
+      type: object
+      properties:
+       roomDescription:
+        description: "The description of the room, e.g. Lecture theatre"
+        type: string
+       maxCapacity:
+        description: "Maximum capacity of room"
+        type: integer
+       plan:
+        description: "The level the room is on, e.g. 1"
+        type: integer
+       corridor:
+        description: "The corridor the room is on, e.g. A"
+        type: string
+       roomNumber:
+        description: "The full room number, e.g. A114"
+        type: string
+#Anybody getting the list of available rooms (get)
+#Anybody getting the list of booked rooms (get) (filtrera på available och booked)
+       roomStatus:
+ #         type: string
+          description: "The room status"
+          enum:
+            - Available
+            - Booked
+
+    Booking:
+        type: object
+        properties:
+         roomNumber:
+          description: "Room that the booking relates to"
+          type: string
+         startTime:
+          description: "Start time of the reservation"
+          type: string
+          format: date-time
+         endTime:
+          description: "End time of the reservation"
+          type: string
+          format: date-time
+         booker:
+          description: "Name of the person who booked the room"
+          type: string
+         reason:
+          description: "The description of the reason using the room"
+          type: string
+         expectedMaxCapacity:
+          description: "Expected max number of people to use the room in this booking"
+          type: integer
+
+tags:
+- name: "Administrator"
+  description: "Managing the rooms"
+- name: "User"
+  description: "View the availability status of rooms"
+- name: "Staff"
+  description: "Booking a room"
+
+
+paths:
+#An administrator managing the room records (add, remove, edit rooms) 
+  /room:
+    post:
+      tags:
+        - Administrator
+      summary: Add room
+      #Oauth2.0
+      security: 
+        - oAuthSample: 
+          - write_rooms
+          - read_rooms
+      description: Administrator add a new room
+      operationId: addRoom
+      responses:
+        '200':
+          description: Successful
+          #HATEOAS
+          content:
+           application/json:
+            schema:
+             type: object
+             properties:
+              roomNumber:
+               type: string
+               description: Number of the room
+               #HATEOAS FINNS I COMPONENTS, TEST
+       #OpenAPI 3.0's links specification, https://swagger.io/docs/specification/links/.
+          links:
+           GetRoomByRoomNumber:   # <----- The $ref's above point here
+            description: ''
+            operationId: getRoomNumber
+            parameters:
+             roomNumber: '$response.body#/roomNumber'
+            #SLUT PÅ HATEOAS
+        '400':
+          $ref: '#/components/responses/400Error'
+        '404':
+          description: "Not found"
+
+      requestBody:
+        description: Create a new room
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Room'
+   
+#Anybody getting the list of rooms on a specific floor (plan)
+
+  /room/findRoomsOnFloor:
+    get:
+      tags:
+        - User
+      summary: Find rooms on floor
+      description: Getting the list of rooms on a specific floor.
+      operationId: findRoomsOnFloor
+      parameters:
+        - name: plan
+          in: query
+          description: Floor levels to filter by
+          required: true
+          schema:
+           type: integer
+  #          anyOf:
+  #            - $ref: '#/components/parameters/Limit'
+  #            - $ref: '#/components/parameters/Offset'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Room'
+        '400':
+          $ref: '#/components/responses/400Error'
+          
+
+  /room/{roomNumber}:
+  
+    get:
+      tags:
+        - Administrator
+      summary: Get room number
+      #Oauth2.0
+      security: 
+        - oAuthSample: 
+          - write_rooms
+          - read_rooms
+      description: Admin get the room number
+      #HATEOAS
+      operationId: getRoomNumber
+      parameters:
+       - name: roomNumber
+         in: path
+         required: true
+         schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully getting a room number
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                 $ref: '#/components/schemas/Room' 
+        '400':
+          $ref: '#/components/responses/400Error'
+        '404':
+          description: Room number not found 
+    delete:
+      tags:
+      - Administrator
+      summary: Remove room
+      #Oauth2.0
+      security: 
+        - oAuthSample: 
+          - write_rooms
+          - read_rooms
+      description: Administrator remove a room
+      operationId: removeRoom
+      parameters:
+        - name: roomNumber
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful
+          content:
+           application/json:
+            schema:
+             type: object
+             properties:
+              roomNumber:
+               type: string
+               description: Number of the room
+          links:
+           GetRoomByRoomNumber:
+             $ref: '#/components/links/GetRoomByRoomNumber'
+        '400':
+          $ref: '#/components/responses/400Error'
+    patch:
+      tags:
+      - Administrator
+      summary: Edit room
+      security: 
+        - oAuthSample: [write_pets]
+      operationId: editRoom
+      description: Administrator edit a room
+      parameters:
+        - name: roomNumber
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Editing a room
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Room'
+      responses:
+        '200':
+          description: Successful with editing a room
+          content:
+           application/json:
+            schema:
+             type: object
+             properties:
+              roomNumber:
+               type: string
+               description: Number of the room
+                  
+          links:
+           GetRoomByRoomNumber:
+             $ref: '#/components/links/GetRoomByRoomNumber'
+        '400':
+          $ref: '#/components/responses/400Error'
+        "404":
+          description: "Room number not found"
+          
+          #EN PATH FÖR GETROOMS med  roomnumberFÖR HATEOAS?
+          
+#Anybody getting the list of available rooms (get)
+#Anybody getting the list of booked rooms (get) (filtrera på available och booked)
+
+  /room/roomStatus:
+    get:
+      tags:
+        - User
+      summary: Status of rooms
+      description: User filter room based on available and booked rooms.
+      operationId: getRooms
+      parameters:
+      - name: roomStatus
+        in: query
+        required: true
+        schema:
+ #           type: string
+# Rather than entering free text, we want the user to select a pre-defined value.
+            enum:
+            - Available
+            - Booked
+            default: Available
+      responses:
+        '200':
+          description: Successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Room'
+        '400':
+          $ref: '#/components/responses/400Error'
+
+#Anybody getting the booking status of a specific room
+# I.e A123?roomStatus=Booked, would return if booked or not.
+  /room/roomStatus/{roomNumber}:
+    get:
+      tags:
+        - User
+      summary: Booking status of room
+      description: User get the booking status of a specific room.
+      #HATEOAS
+      operationId: getBookedRoom
+      parameters:
+       - name: roomNumber
+         in: path
+         required: true
+         schema:
+           type: string
+# Rather than entering free text, we want the user to select a pre-defined value.
+      responses:
+        '200':
+          description: Successful
+          content:
+            application/json:
+              schema:
+              #ska det in ett items eller     type: string/array?
+                  properties:
+                   roomStatus:
+                    description: "The room status"
+                    enum:
+                    - Available
+                    - Booked
+                  
+        '400':
+          $ref: '#/components/responses/400Error'
+        '404':
+          description: Room number not found
+     
+              
+
+#A staff member requesting to book a room /ref till booking post?
+# Staff member väljer ju ut ett rum med numret som de önskr
+  /room/booking/{roomNumber}:
+  
+    get:
+      tags:
+        - Staff
+      summary: Get booked room number
+      #Oauth2.0
+      security: 
+        - oAuthSample: 
+          - write_rooms
+          - read_rooms
+      description: Staff get the booked room number
+      #HATEOAS
+      operationId: getBookedRoomNumber
+      parameters:
+       - name: roomNumber
+         in: path
+         required: true
+         schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully getting a booked room number
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                 $ref: '#/components/schemas/Room'
+        '400':
+          $ref: '#/components/responses/400Error'
+
+    post:
+      tags:
+        - Staff
+      summary: Request room
+      #Oauth2.0
+      security: 
+        - oAuthSample: 
+          - write_rooms
+          - read_rooms
+      description: The staff requesting to book a room
+      operationId: bookingRoom
+      parameters:
+        - name: roomNumber
+          in: path
+          description: The room number that the staff requests
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful
+          content:
+           application/json:
+            schema:
+             type: object
+             properties:
+              roomNumber:
+               type: string
+               description: Number of the room
+          links:
+           GetBookedRoomByRoomNumber:   
+            $ref: '#/components/links/GetBookedRoomByRoomNumber'
+        '400':
+          $ref: '#/components/responses/400Error'
+        "404":
+          description: "Room number not found"
+      requestBody:
+        description: Book a room
+        required: true
+        content:
+          application/json:
+            schema:
+             $ref: '#/components/schemas/Booking'
+#A staff member editing a room they have booked (patch) ref till booking patch
+    patch:
+      tags:
+      - Staff
+      summary: Edit booked room
+      #Oauth2.0
+      security: 
+        - oAuthSample: 
+          - write_rooms
+          - read_rooms
+      description: Staff edit a booked room
+      operationId: editBookedRoom
+      parameters:
+        - name: roomNumber
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Changing a booked room
+        required: true
+        content:
+          application/json:
+            schema:
+             type: object
+             properties:
+               startTime:
+                description: "Start time of the reservation"
+                type: string
+                format: date-time
+               endTime:
+                description: "End time of the reservation"
+                type: string
+                format: date-time
+               booker:
+                description: "Name of the person who booked the room"
+                type: string
+               reason:
+                description: "The description of the reason using the room"
+                type: string
+               expectedMaxCapacity:
+                description: "Expected max number of people to use the room in this booking"
+                type: integer
+      responses:
+        '200':
+          description: Successful with editing a booked room
+          content:
+           application/json:
+            schema:
+             type: object
+             properties:
+              roomNumber:
+               type: string
+               description: Number of the room
+          links:
+           GetBookedRoomByRoomNumber:   
+            $ref: '#/components/links/GetBookedRoomByRoomNumber'
+        '400':
+          $ref: '#/components/responses/400Error'
+        "404":
+          description: "Booking not found"
+          
+    delete:
+#A staff member relinquishing a room they have booked (delete) ref till booking
+      tags:
+      - Staff
+      summary: Relinquish room
+      #Oauth2.0
+      security: 
+        - oAuthSample: 
+          - write_rooms
+          - read_rooms
+      description: Relinquishing a room
+      operationId: deleteRoom
+      parameters:
+        - name: roomNumber
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully relinquished a room
+          content:
+           application/json:
+            schema:
+             type: object
+             properties:
+              roomNumber:
+               type: string
+               description: Number of the room
+          links:
+           GetBookedRoomByRoomNumber:   
+            $ref: '#/components/links/GetBookedRoomByRoomNumber'
+        '400':
+          $ref: '#/components/responses/400Error'
+        "404":
+          description: "Room number not found"
+
+    
+  
