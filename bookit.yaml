@@ -297,12 +297,12 @@ paths:
 #Anybody getting the list of booked rooms 
 #I.e. A123?roomStatus=Booked, would return booked
 #Filter on booked or available
-  /room/roomStatus:
+  /room/roomsStatus:
     get:
       tags:
       - User
       summary: Status of rooms
-      description: User filter room based on available and booked rooms.
+      description: User filter rooms based on available and booked rooms.
       operationId: getRooms
       parameters:
       - name: roomStatus
