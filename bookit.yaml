@@ -120,10 +120,10 @@ paths:
   /room:
     post:
       tags:
-        - Administrator
+      - Administrator
       summary: Add room
       security:
-        - basicAuth: []
+      - basicAuth: []
       description: Administrator add a new room
       operationId: addRoom
       responses:
@@ -163,10 +163,10 @@ paths:
   /room/{roomNumber}:
     get:
       tags:
-        - Administrator
+      - Administrator
       summary: Get room number
       security:
-        - basicAuth: []
+      - basicAuth: []
       description: Admin get the room number
       operationId: getRoomNumber
       parameters:
@@ -196,7 +196,7 @@ paths:
       - Administrator
       summary: Edit room
       security:
-        - basicAuth: []
+      - basicAuth: []
       operationId: editRoom
       description: Administrator edit a room
       parameters:
@@ -238,7 +238,7 @@ paths:
       - Administrator
       summary: Remove room
       security:
-        - basicAuth: []
+      - basicAuth: []
       description: Administrator remove a room
       operationId: removeRoom
       parameters:
@@ -270,7 +270,7 @@ paths:
   /room/findRoomsOnFloor:
     get:
       tags:
-        - User
+      - User
       summary: Find rooms on floor
       description: Getting the list of rooms on a specific floor.
       operationId: findRoomsOnFloor
@@ -300,7 +300,7 @@ paths:
   /room/roomStatus:
     get:
       tags:
-        - User
+      - User
       summary: Status of rooms
       description: User filter room based on available and booked rooms.
       operationId: getRooms
@@ -330,7 +330,7 @@ paths:
   /room/roomStatus/{roomNumber}:
     get:
       tags:
-        - User
+      - User
       summary: Booking status of room
       description: User get the booking status of a specific room.
       operationId: getBookedRoom
@@ -362,10 +362,10 @@ paths:
   /room/booking/{roomNumber}:
     post:
       tags:
-        - Staff
+      - Staff
       summary: Request room
       security:
-        - basicAuth: []
+      - basicAuth: []
       description: The staff requesting to book a room
       operationId: bookingRoom
       parameters:
@@ -404,10 +404,10 @@ paths:
              $ref: '#/components/schemas/Booking'
     get:
       tags:
-        - Staff
+      - Staff
       summary: Get booked room number
       security:
-        - basicAuth: []
+      - basicAuth: []
       description: Staff get the booked room number
       #HATEOAS
       operationId: getBookedRoomNumber
@@ -437,7 +437,7 @@ paths:
       - Staff
       summary: Edit booked room
       security:
-        - basicAuth: []
+      - basicAuth: []
       description: Staff edit a booked room
       operationId: editBookedRoom
       parameters:
@@ -498,7 +498,7 @@ paths:
       - Staff
       summary: Relinquish room
       security:
-        - basicAuth: []
+      - basicAuth: []
       description: Relinquishing a room
       operationId: deleteRoom
       parameters:
