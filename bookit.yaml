@@ -115,9 +115,8 @@ tags:
 - name: "Staff"
   description: "Booking a room"
 
-
-paths:
 #An administrator managing the room records (add, remove, edit rooms) 
+paths:
   /room:
     post:
       tags:
@@ -138,7 +137,7 @@ paths:
               roomNumber:
                type: string
                description: Number of the room
-       #OpenAPI 3.0's links specification, https://swagger.io/docs/specification/links/.
+       #OpenAPI 3.0's links specification, https://swagger.io/docs/specification/links/
           links:
            GetRoomByRoomNumber:  
             description: ''
@@ -160,34 +159,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Room'
-   
-#Anybody getting the list of rooms on a specific floor (plan)
-
-  /room/findRoomsOnFloor:
-    get:
-      tags:
-        - User
-      summary: Find rooms on floor
-      description: Getting the list of rooms on a specific floor.
-      operationId: findRoomsOnFloor
-      parameters:
-        - name: plan
-          in: query
-          description: Floor levels to filter by
-          required: true
-          schema:
-           type: integer
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Room'
-        '400':
-          $ref: '#/components/responses/400Error'
 
   /room/{roomNumber}:
     get:
@@ -219,38 +190,7 @@ paths:
            $ref: '#/components/responses/401Unauthorized'
         '404':
           description: Room number not found 
-    delete:
-      tags:
-      - Administrator
-      summary: Remove room
-      security:
-        - basicAuth: []
-      description: Administrator remove a room
-      operationId: removeRoom
-      parameters:
-        - name: roomNumber
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successful
-          content:
-           application/json:
-            schema:
-             type: object
-             properties:
-              roomNumber:
-               type: string
-               description: Number of the room
-          links:
-           GetRoomByRoomNumber:
-             $ref: '#/components/links/GetRoomByRoomNumber'
-        '400':
-          $ref: '#/components/responses/400Error'
-        '401':
-           $ref: '#/components/responses/401Unauthorized'
+
     patch:
       tags:
       - Administrator
@@ -293,9 +233,69 @@ paths:
           description: "Room number not found"
         '401':
            $ref: '#/components/responses/401Unauthorized'
-          
-#Anybody getting the list of available rooms (get)
-#Anybody getting the list of booked rooms (get) 
+    delete:
+      tags:
+      - Administrator
+      summary: Remove room
+      security:
+        - basicAuth: []
+      description: Administrator remove a room
+      operationId: removeRoom
+      parameters:
+        - name: roomNumber
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful
+          content:
+           application/json:
+            schema:
+             type: object
+             properties:
+              roomNumber:
+               type: string
+               description: Number of the room
+          links:
+           GetRoomByRoomNumber:
+             $ref: '#/components/links/GetRoomByRoomNumber'
+        '400':
+          $ref: '#/components/responses/400Error'
+        '401':
+           $ref: '#/components/responses/401Unauthorized'
+           
+#Anybody getting the list of rooms on a specific floor (plan)
+  /room/findRoomsOnFloor:
+    get:
+      tags:
+        - User
+      summary: Find rooms on floor
+      description: Getting the list of rooms on a specific floor.
+      operationId: findRoomsOnFloor
+      parameters:
+        - name: plan
+          in: query
+          description: Floor levels to filter by
+          required: true
+          schema:
+           type: integer
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Room'
+        '400':
+          $ref: '#/components/responses/400Error'
+
+#Anybody getting the list of available rooms 
+#Anybody getting the list of booked rooms 
+#I.e. A123?roomStatus=Booked, would return booked
 #Filter on booked or available
   /room/roomStatus:
     get:
@@ -309,7 +309,7 @@ paths:
         in: query
         required: true
         schema:
-# Rather than entering free text, we want the user to select a pre-defined value.
+# Rather than entering free text, we want the user to select a pre-defined value
             enum:
             - Available
             - Booked
@@ -326,7 +326,7 @@ paths:
           $ref: '#/components/responses/400Error'
 
 #Anybody getting the booking status of a specific room
-#I.e. A123?roomStatus=Booked, would return if booked.
+#Would return roomStatus, either available (default) or booked
   /room/roomStatus/{roomNumber}:
     get:
       tags:
@@ -340,7 +340,6 @@ paths:
          required: true
          schema:
            type: string
-#Rather than entering free text, we want the user to select a pre-defined value.
       responses:
         '200':
           description: Successful
@@ -353,44 +352,14 @@ paths:
                     enum:
                     - Available
                     - Booked
-                  
         '400':
           $ref: '#/components/responses/400Error'
         '404':
           description: Room number not found
      
 #A staff member requesting to book a room
-#The staff member selects a room with the number they want
+#The staff member chooses a room with the number they want
   /room/booking/{roomNumber}:
-    get:
-      tags:
-        - Staff
-      summary: Get booked room number
-      security:
-        - basicAuth: []
-      description: Staff get the booked room number
-      #HATEOAS
-      operationId: getBookedRoomNumber
-      parameters:
-       - name: roomNumber
-         in: path
-         required: true
-         schema:
-          type: string
-      responses:
-        '200':
-          description: Successfully getting a booked room number
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                 $ref: '#/components/schemas/Room'
-        '400':
-          $ref: '#/components/responses/400Error'
-        '401':
-           $ref: '#/components/responses/401Unauthorized'
-
     post:
       tags:
         - Staff
@@ -433,6 +402,35 @@ paths:
           application/json:
             schema:
              $ref: '#/components/schemas/Booking'
+    get:
+      tags:
+        - Staff
+      summary: Get booked room number
+      security:
+        - basicAuth: []
+      description: Staff get the booked room number
+      #HATEOAS
+      operationId: getBookedRoomNumber
+      parameters:
+       - name: roomNumber
+         in: path
+         required: true
+         schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully getting a booked room number
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                 $ref: '#/components/schemas/Room'
+        '400':
+          $ref: '#/components/responses/400Error'
+        '401':
+           $ref: '#/components/responses/401Unauthorized'
+
 #A staff member editing a room they have booked (patch)
     patch:
       tags:
@@ -493,9 +491,9 @@ paths:
            $ref: '#/components/responses/401Unauthorized'
         "404":
           description: "Booking not found"
-          
+
+#A staff member relinquishing a room they have booked    
     delete:
-#A staff member relinquishing a room they have booked (delete)
       tags:
       - Staff
       summary: Relinquish room
