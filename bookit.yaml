@@ -356,9 +356,11 @@ paths:
           $ref: '#/components/responses/400Error'
         '404':
           description: Room number not found
-     
+          
 #A staff member requesting to book a room
 #The staff member chooses a room with the number they want
+
+#The hypothetical system bookIT only has to do with rooms, so I also specify what the staff books in the URI itself.
   /room/booking/{roomNumber}:
     post:
       tags:
