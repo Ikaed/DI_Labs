@@ -309,7 +309,7 @@ paths:
         in: query
         required: true
         schema:
-# Rather than entering free text, we want the user to select a pre-defined value
+#Rather than entering free text, we want the user to select a pre-defined value
             enum:
             - Available
             - Booked
@@ -326,7 +326,7 @@ paths:
           $ref: '#/components/responses/400Error'
 
 #Anybody getting the booking status of a specific room
-#Would return roomStatus, either available (default) or booked
+#Would return roomStatus, either available or booked
   /room/roomStatus/{roomNumber}:
     get:
       tags:
@@ -411,7 +411,6 @@ paths:
       security:
       - basicAuth: []
       description: Staff get the booked room number
-      #HATEOAS
       operationId: getBookedRoomNumber
       parameters:
        - name: roomNumber
@@ -433,7 +432,7 @@ paths:
         '401':
            $ref: '#/components/responses/401Unauthorized'
 
-#A staff member editing a room they have booked (patch)
+#A staff member editing a room they have booked 
     patch:
       tags:
       - Staff
