@@ -297,7 +297,7 @@ paths:
 #Anybody getting the list of booked rooms 
 #I.e. A123?roomStatus=Booked, would return booked
 #Filter on booked or available
-  /room/roomsStatus:
+  /room/status:
     get:
       tags:
       - User
@@ -327,7 +327,7 @@ paths:
 
 #Anybody getting the booking status of a specific room
 #Would return roomStatus, either available or booked
-  /room/roomStatus/{roomNumber}:
+  /room/status/{roomNumber}:
     get:
       tags:
       - User
