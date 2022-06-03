@@ -326,7 +326,7 @@ paths:
           $ref: '#/components/responses/400Error'
 
 #Anybody getting the booking status of a specific room
-#Would return roomStatus, either available or booked
+#Would return status, either available or booked
   /room/status/{roomNumber}:
     get:
       tags:
