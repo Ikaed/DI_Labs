@@ -137,7 +137,7 @@ paths:
               roomNumber:
                type: string
                description: Number of the room
-       #OpenAPI 3.0's links specification, https://swagger.io/docs/specification/links/
+#OpenAPI 3.0's links specification, https://swagger.io/docs/specification/links/
           links:
            GetRoomByRoomNumber:  
             description: ''
@@ -295,7 +295,7 @@ paths:
 
 #Anybody getting the list of available rooms 
 #Anybody getting the list of booked rooms 
-#I.e. A123?roomStatus=Booked, would return booked
+#I.e. ?roomStatus=Booked, would return booked
 #Filter on booked or available
   /room/status:
     get:
